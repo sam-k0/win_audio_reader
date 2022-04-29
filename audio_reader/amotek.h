@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <Windows.h>
+#include <iostream>
 /* AMOTEK typedefs */
 /* Define GameMaker Booleans */
 #define gmtrue 1.0;
@@ -20,15 +21,34 @@ typedef double gmbool;              // Datatype for GM Boolean
 using namespace std; // Fight me
 
 // amotek-core bindings: Typedefs
-typedef gmbool(*pInitAmoTek)(string name); // Init 
+typedef gmbool(*pInitAmoTek)(stringToDLL name); // Init 
 typedef gmbool(*pAmoTekSetLights)(gmint red, gmint green, gmint blue); // set lights
 typedef gmbool(*pAmoTekSetTargetDevice)(gmint devicetype); // Set target device
 typedef gmbool(*pAmoTekShutdown)(); // Shutdown
 
 HMODULE hMod = LoadLibrary(TEXT("./lib/amotekcore.dll")); // Load the DLL
 
+
 // Allocate functions
 pInitAmoTek initAmoTek = (pInitAmoTek)GetProcAddress(hMod, "initAmoTek");
 pAmoTekSetLights AmoTekSetLights = (pAmoTekSetLights)GetProcAddress(hMod, "AmoTekSetLights");
 pAmoTekSetTargetDevice AmoTekSetTargetDevice = (pAmoTekSetTargetDevice)GetProcAddress(hMod, "AmoTekSetTargetDevice");
 pAmoTekShutdown AmoTekShutdown = (pAmoTekShutdown)GetProcAddress(hMod, "AmoTekShutdown");
+
+
+bool checkAmoTek()
+{
+	if (hMod == NULL)
+	{
+		cout << "Could not find DLL!" << endl;
+		exit(-2);
+	}
+	
+	if (initAmoTek == NULL)
+	{
+		cout << "Could not bind to DLL!" << endl;
+		exit(-3);
+	}
+
+	cout << "AmoTek DLL initialized!" << endl;
+}
